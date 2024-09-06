@@ -25,29 +25,36 @@ environment {
             }
         }
         stage("Jar Publish") {
-        steps {
-            script {
-                    echo '<--------------- Jar Publish Started --------------->'
-                     def server = Artifactory.newServer url:registry+"/artifactory" ,  credentialsId:"jfrog-cred"
-                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}";
-                     def uploadSpec = """{
-                          "files": [
-                            {
-                              "pattern": "jarstaging/(*)",
-                              "target": "mavenrepo-libs-release-local/",
-                              "flat": "false",
-                              "props" : "${properties}",
-                              "exclusions": [ "*.sha1", "*.md5"]
-                            }
-                         ]
-                     }"""
-                     def buildInfo = server.upload(uploadSpec)
-                     buildInfo.env.collect()
-                     server.publishBuildInfo(buildInfo)
-                     echo '<--------------- Jar Publish Ended --------------->'  
-             }
-        }   
-    }
+    steps {
+        script {
+            echo '<--------------- Jar Publish Started --------------->'
+            def server = Artifactory.newServer(url: registry + "/artifactory", credentialsId: "jfrog-cred")
+            def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}"
+            def uploadSpec = """{
+                "files": [
+                    {
+                        "pattern": "jarstaging/*.jar",
+                        "target": "mavenrepo-libs-release-local/com/valaxy/demo-workshop/2.1.2/",
+                        "flat": "false",
+                        "props": "${properties}",
+                        "exclusions": [ "*.sha1", "*.md5" ]
+                    },
+                    {
+                        "pattern": "jarstaging/*.pom",
+                        "target": "mavenrepo-libs-release-local/com/valaxy/demo-workshop/2.1.2/",
+                        "flat": "false",
+                        "props": "${properties}",
+                        "exclusions": [ "*.sha1", "*.md5" ]
+                    }
+                ]
+            }"""
+            def buildInfo = server.upload(uploadSpec)
+            buildInfo.env.collect()
+            server.publishBuildInfo(buildInfo)
+            echo '<--------------- Jar Publish Ended --------------->'
+        }
+    }   
+}
 
 }
 }
