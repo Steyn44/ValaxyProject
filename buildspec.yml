@@ -1,12 +1,21 @@
+version: 0.2
+
 phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - mvn install
   build:
     commands:
+      - echo Building the project...
       - mvn clean package -DskipTests
   post_build:
     commands:
-      - echo Build completed. Preparing artifacts for deployment...
+      - echo Build completed. Preparing artifacts...
       - mkdir -p output
       - cp target/*.jar output/
+
 artifacts:
   files:
     - output/*.jar
+
