@@ -1,21 +1,12 @@
-version: 0.2
-
 phases:
-  install:
-    commands:
-      - echo Installing dependencies...
-      - mvn install -DskipTests
   build:
     commands:
-      - echo Building the Java application...
-      - mvn clean package
+      - mvn clean package -DskipTests
   post_build:
     commands:
       - echo Build completed. Preparing artifacts for deployment...
       - mkdir -p output
       - cp target/*.jar output/
-
 artifacts:
   files:
-    - output/**
-  discard-paths: yes
+    - output/*.jar
